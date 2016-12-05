@@ -1,8 +1,29 @@
+// Copyright 2016 Zack Guo <zack.y.guo@gmail.com>. All rights reserved.
+// Use of this source code is governed by a MIT license that can
+// be found in the LICENSE file.
+
 package termui
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestBlock_InnerBounds(t *testing.T) {
+func TestBlockFloat(t *testing.T) {
+	Init()
+	defer Close()
+
+	b := NewBlock()
+	b.X = 10
+	b.Y = 20
+
+	b.Float = AlignCenter
+	b.Align()
+}
+
+func TestBlockInnerBounds(t *testing.T) {
+	Init()
+	defer Close()
+
 	b := NewBlock()
 	b.X = 10
 	b.Y = 11
@@ -11,12 +32,17 @@ func TestBlock_InnerBounds(t *testing.T) {
 
 	assert := func(name string, x, y, w, h int) {
 		t.Log(name)
-		cx, cy, cw, ch := b.InnerBounds()
+		area := b.InnerBounds()
+		cx := area.Min.X
+		cy := area.Min.Y
+		cw := area.Dx()
+		ch := area.Dy()
+
 		if cx != x {
 			t.Errorf("expected x to be %d but got %d", x, cx)
 		}
 		if cy != y {
-			t.Errorf("expected y to be %d but got %d", y, cy)
+			t.Errorf("expected y to be %d but got %d\n%+v", y, cy, area)
 		}
 		if cw != w {
 			t.Errorf("expected width to be %d but got %d", w, cw)
@@ -26,10 +52,10 @@ func TestBlock_InnerBounds(t *testing.T) {
 		}
 	}
 
-	b.HasBorder = false
+	b.Border = false
 	assert("no border, no padding", 10, 11, 12, 13)
 
-	b.HasBorder = true
+	b.Border = true
 	assert("border, no padding", 11, 12, 10, 11)
 
 	b.PaddingBottom = 2

@@ -1,4 +1,4 @@
-// Copyright 2015 Zack Guo <gizak@icloud.com>. All rights reserved.
+// Copyright 2016 Zack Guo <zack.y.guo@gmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT license that can
 // be found in the LICENSE file.
 
@@ -7,22 +7,20 @@ package termui
 import (
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestStr2Rune(t *testing.T) {
 	s := "你好,世界."
 	rs := str2runes(s)
 	if len(rs) != 6 {
-		t.Error()
+		t.Error(t)
 	}
 }
 
 func TestWidth(t *testing.T) {
 	s0 := "つのだ☆HIRO"
 	s1 := "11111111111"
-	spew.Dump(s0)
-	spew.Dump(s1)
 	// above not align for setting East Asian Ambiguous to wide!!
 
 	if strWidth(s0) != strWidth(s1) {
@@ -55,4 +53,18 @@ func TestTrim(t *testing.T) {
 	if string(trimStr2Runes(s, 15)) != "つのだ☆HIRO" {
 		t.Error("avoid trim failed")
 	}
+}
+
+func TestTrimStrIfAppropriate_NoTrim(t *testing.T) {
+	assert.Equal(t, "hello", TrimStrIfAppropriate("hello", 5))
+}
+
+func TestTrimStrIfAppropriate(t *testing.T) {
+	assert.Equal(t, "hel…", TrimStrIfAppropriate("hello", 4))
+	assert.Equal(t, "h…", TrimStrIfAppropriate("hello", 2))
+}
+
+func TestStringToAttribute(t *testing.T) {
+	assert.Equal(t, ColorRed, StringToAttribute("ReD"))
+	assert.Equal(t, ColorRed|AttrBold, StringToAttribute("RED, bold"))
 }
